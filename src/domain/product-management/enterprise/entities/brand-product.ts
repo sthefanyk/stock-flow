@@ -18,4 +18,9 @@ export class BrandProduct extends Entity<BrandProductProps> {
     get description(): string {
         return this.props.description
     }
+
+    static create(props: BrandProductProps) {
+        const brand = new BrandProduct(props)
+        return brand
+    }
 }

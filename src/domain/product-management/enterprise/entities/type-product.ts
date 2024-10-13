@@ -1,15 +1,15 @@
-import { Entity } from '@/shared/entities/entity'
-import { TypeSizeList } from './type-size-list'
+import { SizeList } from './size-list'
 import { SizeProduct } from './size-product'
-import { TypeSize } from './type-size'
+import { Optional } from '@/shared/types/optional'
+import { AggregateRoot } from '@/shared/entities/aggregate-root'
 
 export interface TypeProductProps {
     code: string
     name: string
-    typeSizes: TypeSizeList
+    sizes: SizeList
 }
 
-export class TypeProduct extends Entity<TypeProductProps> {
+export class TypeProduct extends AggregateRoot<TypeProductProps> {
     get code(): string {
         return this.props.code
     }
@@ -18,16 +18,37 @@ export class TypeProduct extends Entity<TypeProductProps> {
         return this.props.name
     }
 
-    get typeSizes(): TypeSizeList {
-        return this.props.typeSizes
+    get sizes(): SizeList {
+        return this.props.sizes
     }
 
-    isValidSizeForType(size: SizeProduct): boolean {
-        return this.typeSizes.exists(
-            new TypeSize({
-                codeSize: size.code,
-                codeType: this.code,
-            }),
-        )
+    public set name(name: string) {
+        this.props.name = name
+    }
+
+    public set sizes(sizeList: SizeList) {
+        this.props.sizes = sizeList
+    }
+
+    private isValidSizeForType(size: SizeProduct): boolean {
+        return this.props.sizes.exists(size)
+    }
+
+    addSize(size: SizeProduct): void {
+        if (this.isValidSizeForType(size)) {
+            this.props.sizes.add(size)
+        }
+    }
+
+    removeSize(size: SizeProduct): void {
+        this.props.sizes.remove(size)
+    }
+
+    static create(props: Optional<TypeProductProps, 'sizes'>) {
+        const typeProduct = new TypeProduct({
+            ...props,
+            sizes: props.sizes ?? new SizeList(),
+        })
+        return typeProduct
     }
 }

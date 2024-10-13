@@ -18,4 +18,9 @@ export class CategoryProduct extends Entity<CategoryProductProps> {
     get description(): string {
         return this.props.description
     }
+
+    static create(props: CategoryProductProps) {
+        const category = new CategoryProduct(props)
+        return category
+    }
 }

@@ -13,4 +13,9 @@ export class ColorProduct extends Entity<ColorProductProps> {
     get name(): string {
         return this.props.name
     }
+
+    static create(props: ColorProductProps) {
+        const color = new ColorProduct(props)
+        return color
+    }
 }
