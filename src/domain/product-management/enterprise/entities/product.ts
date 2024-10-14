@@ -3,7 +3,6 @@ import { SKU } from '../value-objects/SKU'
 import { UniqueEntityID } from '@/shared/value-objects/unique-entity-id'
 
 export interface ProductProps {
-    id: UniqueEntityID
     SKU: SKU
     name: string
     description: string
@@ -14,10 +13,6 @@ export interface ProductProps {
 }
 
 export class Product extends Entity<ProductProps> {
-    get id() {
-        return this.props.id
-    }
-
     get SKU() {
         return this.props.SKU
     }
@@ -44,5 +39,15 @@ export class Product extends Entity<ProductProps> {
 
     get minimumQuantity() {
         return this.props.minimumQuantity
+    }
+
+    static update(props: ProductProps, id?: UniqueEntityID) {
+        const product = new Product(props, id)
+        return product
+    }
+
+    static create(props: ProductProps, id?: UniqueEntityID) {
+        const product = new Product(props, id)
+        return product
     }
 }

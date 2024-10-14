@@ -30,7 +30,7 @@ export class TypeProduct extends AggregateRoot<TypeProductProps> {
         this.props.sizes = sizeList
     }
 
-    private isValidSizeForType(size: SizeProduct): boolean {
+    isValidSizeForType(size: SizeProduct): boolean {
         return this.props.sizes.exists(size)
     }
 
