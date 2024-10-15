@@ -15,7 +15,6 @@ type CreateProductUseCaseInput = {
     typeCode: string
     sizeCode: string
     colorCode: string
-    price: number
     cost: number
     quantityInStock: number
     minimumQuantity: number
@@ -41,7 +40,6 @@ export class CreateProductUseCase {
         typeCode,
         sizeCode,
         colorCode,
-        price,
         cost,
         quantityInStock,
         minimumQuantity,
@@ -69,7 +67,6 @@ export class CreateProductUseCase {
             SKU: new SKU(category, brand, type, size, color),
             name,
             description,
-            price,
             cost,
             quantityInStock,
             minimumQuantity,

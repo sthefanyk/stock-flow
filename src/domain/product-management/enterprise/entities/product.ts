@@ -6,7 +6,6 @@ export interface ProductProps {
     SKU: SKU
     name: string
     description: string
-    price: number
     cost: number
     quantityInStock: number
     minimumQuantity: number
@@ -23,10 +22,6 @@ export class Product extends Entity<ProductProps> {
 
     get description() {
         return this.props.description
-    }
-
-    get price() {
-        return this.props.price
     }
 
     get cost() {
