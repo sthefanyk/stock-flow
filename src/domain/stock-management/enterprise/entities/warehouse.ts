@@ -1,5 +1,5 @@
-import { Address } from '@/domain/product-management/enterprise/value-objects/adreess'
 import { Entity } from '@/shared/entities/entity'
+import { Address } from '../value-objects/adreess'
 
 export interface WarehouseProps {
     name: string
