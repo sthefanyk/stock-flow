@@ -1,5 +1,6 @@
 import { AggregateRoot } from '@/shared/entities/aggregate-root'
 import { UniqueEntityID } from '@/shared/value-objects/unique-entity-id'
+import { StockLowEvent } from '../events/stock-low-event'
 
 export interface StockProps {
     productId: UniqueEntityID
@@ -26,6 +27,18 @@ export class Stock extends AggregateRoot<StockProps> {
         if (newQuantityInStock >= 0) {
             this.props.quantityInStock = newQuantityInStock
         }
+
+        this.checkIfStockIsBelowTheMinimumQuantity()
+    }
+
+    checkIfStockIsBelowTheMinimumQuantity(): boolean {
+        const stockLow = this.quantityInStock < this.minimumQuantity
+
+        if (stockLow) {
+            this.addDomainEvent(new StockLowEvent(this))
+        }
+
+        return stockLow
     }
 
     static create(props: StockProps, id?: UniqueEntityID) {
