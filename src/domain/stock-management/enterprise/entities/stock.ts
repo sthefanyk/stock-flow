@@ -1,4 +1,4 @@
-import { Entity } from '@/shared/entities/entity'
+import { AggregateRoot } from '@/shared/entities/aggregate-root'
 import { UniqueEntityID } from '@/shared/value-objects/unique-entity-id'
 
 export interface StockProps {
@@ -7,7 +7,7 @@ export interface StockProps {
     minimumQuantity: number
 }
 
-export class Stock extends Entity<StockProps> {
+export class Stock extends AggregateRoot<StockProps> {
     get productId() {
         return this.props.productId
     }
@@ -18,6 +18,14 @@ export class Stock extends Entity<StockProps> {
 
     get minimumQuantity() {
         return this.props.minimumQuantity
+    }
+
+    reduceQuantityInStock(quantity: number): void {
+        const newQuantityInStock = this.quantityInStock - quantity
+
+        if (newQuantityInStock >= 0) {
+            this.props.quantityInStock = newQuantityInStock
+        }
     }
 
     static create(props: StockProps, id?: UniqueEntityID) {
