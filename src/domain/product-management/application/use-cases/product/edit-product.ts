@@ -18,8 +18,6 @@ type EditProductUseCaseInput = {
     sizeCode: string
     colorCode: string
     cost: number
-    quantityInStock: number
-    minimumQuantity: number
 }
 
 type EditProductUseCaseOutput = { productUpdated: Product }
@@ -44,8 +42,6 @@ export class EditProductUseCase {
         sizeCode,
         colorCode,
         cost,
-        quantityInStock,
-        minimumQuantity,
     }: EditProductUseCaseInput): Promise<EditProductUseCaseOutput> {
         const product = await this.productRepository.findById(id)
         if (!product) throw new Error('Product not found.')
@@ -75,8 +71,6 @@ export class EditProductUseCase {
                 name,
                 description,
                 cost,
-                quantityInStock,
-                minimumQuantity,
             },
             new UniqueEntityID(id),
         )

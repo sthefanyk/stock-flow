@@ -6,6 +6,7 @@ import { TypeProductDAO } from '../../DAO/type-product-dao'
 import { SizeProductDAO } from '../../DAO/size-product-dao'
 import { ColorProductDAO } from '../../DAO/color-product-dao'
 import { ProductDAO } from '../../DAO/product-dao'
+import { DomainEvents } from '@/shared/events/domain-events'
 
 type CreateProductUseCaseInput = {
     name: string
@@ -16,8 +17,6 @@ type CreateProductUseCaseInput = {
     sizeCode: string
     colorCode: string
     cost: number
-    quantityInStock: number
-    minimumQuantity: number
 }
 
 type CreateProductUseCaseOutput = { product: Product }
@@ -41,8 +40,6 @@ export class CreateProductUseCase {
         sizeCode,
         colorCode,
         cost,
-        quantityInStock,
-        minimumQuantity,
     }: CreateProductUseCaseInput): Promise<CreateProductUseCaseOutput> {
         const category =
             await this.categoryProductRepository.findByCode(categoryCode)
@@ -68,11 +65,11 @@ export class CreateProductUseCase {
             name,
             description,
             cost,
-            quantityInStock,
-            minimumQuantity,
         })
 
         await this.productRepository.create(product)
+
+        DomainEvents.dispatchEventsForAggregate(product.id)
 
         return { product }
     }

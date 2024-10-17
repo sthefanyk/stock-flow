@@ -1,17 +1,16 @@
-import { Entity } from '@/shared/entities/entity'
 import { SKU } from '../value-objects/SKU'
 import { UniqueEntityID } from '@/shared/value-objects/unique-entity-id'
+import { AggregateRoot } from '@/shared/entities/aggregate-root'
+import { ProductCreatedEvent } from '../events/product-created-event'
 
 export interface ProductProps {
     SKU: SKU
     name: string
     description: string
     cost: number
-    quantityInStock: number
-    minimumQuantity: number
 }
 
-export class Product extends Entity<ProductProps> {
+export class Product extends AggregateRoot<ProductProps> {
     get SKU() {
         return this.props.SKU
     }
@@ -28,14 +27,6 @@ export class Product extends Entity<ProductProps> {
         return this.props.cost
     }
 
-    get quantityInStock() {
-        return this.props.quantityInStock
-    }
-
-    get minimumQuantity() {
-        return this.props.minimumQuantity
-    }
-
     static update(props: ProductProps, id?: UniqueEntityID) {
         const product = new Product(props, id)
         return product
@@ -43,6 +34,13 @@ export class Product extends Entity<ProductProps> {
 
     static create(props: ProductProps, id?: UniqueEntityID) {
         const product = new Product(props, id)
+
+        const isNewProduct = !id
+
+        if (isNewProduct) {
+            product.addDomainEvent(new ProductCreatedEvent(product))
+        }
+
         return product
     }
 }
