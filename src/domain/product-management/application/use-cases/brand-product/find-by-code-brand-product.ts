@@ -15,7 +15,9 @@ export class FindByCodeBrandProductUseCase {
     async execute({
         code,
     }: FindByCodeBrandProductUseCaseInput): Promise<FindByCodeBrandProductUseCaseOutput> {
-        const brandProduct = await this.brandProductRepository.findByCode(code)
+        const brandProduct = await this.brandProductRepository.findByCode(
+            code.toUpperCase(),
+        )
         return { brandProduct }
     }
 }

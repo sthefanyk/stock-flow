@@ -13,7 +13,9 @@ export class DeleteColorProductUseCase {
     async execute({
         code,
     }: DeleteColorProductUseCaseInput): Promise<DeleteColorProductUseCaseOutput> {
-        const colorProduct = await this.colorProductRepository.findByCode(code)
+        const colorProduct = await this.colorProductRepository.findByCode(
+            code.toUpperCase(),
+        )
         if (!colorProduct) throw new Error('Resource not found.')
 
         await this.colorProductRepository.delete(colorProduct)

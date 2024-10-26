@@ -35,9 +35,9 @@ export class TypeProduct extends AggregateRoot<TypeProductProps> {
     }
 
     addSize(size: SizeProduct): void {
-        if (this.isValidSizeForType(size)) {
-            this.props.sizes.add(size)
-        }
+        this.props.sizes.add(size)
+        // if (this.isValidSizeForType(size)) {
+        // }
     }
 
     removeSize(size: SizeProduct): void {
@@ -46,9 +46,31 @@ export class TypeProduct extends AggregateRoot<TypeProductProps> {
 
     static create(props: Optional<TypeProductProps, 'sizes'>) {
         const typeProduct = new TypeProduct({
-            ...props,
+            ...this.validate(props),
             sizes: props.sizes ?? new SizeList(),
         })
         return typeProduct
+    }
+
+    static validate(props: Optional<TypeProductProps, 'sizes'>) {
+        // Validation for the name (should not be empty)
+        if (!props.name || props.name.trim() === '') {
+            throw new Error('The name cannot be empty.')
+        }
+        props.name = props.name
+            .split(' ')
+            .map(
+                (word) =>
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+            )
+            .join(' ')
+
+        // Validation for the code (exactly 2 letters) and convert to uppercase
+        if (!/^[a-zA-Z]{2}$/.test(props.code)) {
+            throw new Error('The code must contain exactly 2 letters.')
+        }
+        props.code = props.code.toUpperCase()
+
+        return props
     }
 }

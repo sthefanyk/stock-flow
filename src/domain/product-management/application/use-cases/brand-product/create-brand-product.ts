@@ -4,7 +4,7 @@ import { BrandProductDAO } from '../../DAO/brand-product-dao'
 type CreateBrandProductUseCaseInput = {
     code: string
     name: string
-    description: string
+    description?: string
 }
 
 type CreateBrandProductUseCaseOutput = { brandProduct: BrandProduct }
@@ -17,8 +17,10 @@ export class CreateBrandProductUseCase {
         name,
         description,
     }: CreateBrandProductUseCaseInput): Promise<CreateBrandProductUseCaseOutput> {
-        const brand = await this.brandProductRepository.findByCode(code)
-        if (!brand) throw new Error('Resources already exist.')
+        const brand = await this.brandProductRepository.findByCode(
+            code.toUpperCase(),
+        )
+        if (brand) throw new Error('Resources already exist.')
 
         const brandProduct = BrandProduct.create({
             code,

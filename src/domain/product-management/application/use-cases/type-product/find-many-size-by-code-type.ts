@@ -6,7 +6,7 @@ type FindManySizeByCodeTypeProductUseCaseInput = {
 }
 
 type FindManySizeByCodeTypeProductUseCaseOutput = {
-    sizeProduct: SizeProduct[]
+    sizes: SizeProduct[]
 }
 
 export class FindManySizeByCodeTypeProductUseCase {
@@ -15,8 +15,9 @@ export class FindManySizeByCodeTypeProductUseCase {
     async execute({
         code,
     }: FindManySizeByCodeTypeProductUseCaseInput): Promise<FindManySizeByCodeTypeProductUseCaseOutput> {
-        const sizeProduct =
-            await this.sizeProductRepository.findManyByTypeCode(code)
-        return { sizeProduct }
+        const sizeProduct = await this.sizeProductRepository.findManyByTypeCode(
+            code.toUpperCase(),
+        )
+        return { sizes: sizeProduct }
     }
 }

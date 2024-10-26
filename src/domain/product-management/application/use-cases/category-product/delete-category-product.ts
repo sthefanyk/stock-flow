@@ -13,8 +13,9 @@ export class DeleteCategoryProductUseCase {
     async execute({
         code,
     }: DeleteCategoryProductUseCaseInput): Promise<DeleteCategoryProductUseCaseOutput> {
-        const categoryProduct =
-            await this.categoryProductRepository.findByCode(code)
+        const categoryProduct = await this.categoryProductRepository.findByCode(
+            code.toUpperCase(),
+        )
         if (!categoryProduct) throw new Error('Resource not found.')
 
         await this.categoryProductRepository.delete(categoryProduct)

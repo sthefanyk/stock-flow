@@ -11,13 +11,14 @@ type EditTypeProductUseCaseInput = {
         unitOfMeasure: string
         sizeList: {
             code: string
-            description: string
+            description?: string
         }[]
     }
 }
 
 type EditTypeProductUseCaseOutput = { typeProduct: TypeProduct }
 
+// TODO: Refactor
 export class EditTypeProductUseCase {
     constructor(
         private typeProductRepository: TypeProductDAO,
@@ -29,11 +30,15 @@ export class EditTypeProductUseCase {
         name,
         sizes,
     }: EditTypeProductUseCaseInput): Promise<EditTypeProductUseCaseOutput> {
-        const type = await this.typeProductRepository.findByCode(code)
+        const type = await this.typeProductRepository.findByCode(
+            code.toUpperCase(),
+        )
         if (!type) throw new Error('Resources not found.')
 
         const currentSizes =
-            await this.sizeProductRepository.findManyByTypeCode(code)
+            await this.sizeProductRepository.findManyByTypeCode(
+                code.toUpperCase(),
+            )
 
         const sizeList = new SizeList(currentSizes)
 
@@ -48,10 +53,15 @@ export class EditTypeProductUseCase {
 
         sizeList.update(sizesProduct)
 
-        type.name = name
-        type.sizes = sizeList
+        const typeUpdated = TypeProduct.create({
+            code,
+            name,
+            sizes: sizeList,
+        })
 
-        await this.typeProductRepository.save(type)
+        await this.typeProductRepository.save(typeUpdated)
+        await this.sizeProductRepository.deleteManyByTypeCode(typeUpdated.code)
+        await this.sizeProductRepository.saveAll(typeUpdated.sizes.currentItems)
 
         return { typeProduct: type }
     }

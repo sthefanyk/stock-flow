@@ -15,8 +15,9 @@ export class FindByCodeCategoryProductUseCase {
     async execute({
         code,
     }: FindByCodeCategoryProductUseCaseInput): Promise<FindByCodeCategoryProductUseCaseOutput> {
-        const categoryProduct =
-            await this.categoryProductRepository.findByCode(code)
+        const categoryProduct = await this.categoryProductRepository.findByCode(
+            code.toUpperCase(),
+        )
         return { categoryProduct }
     }
 }

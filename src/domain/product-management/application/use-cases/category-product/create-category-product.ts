@@ -4,7 +4,7 @@ import { CategoryProductDAO } from '../../DAO/category-product-dao'
 type CreateCategoryProductUseCaseInput = {
     code: string
     name: string
-    description: string
+    description?: string
 }
 
 type CreateCategoryProductUseCaseOutput = { categoryProduct: CategoryProduct }
@@ -18,7 +18,7 @@ export class CreateCategoryProductUseCase {
         description,
     }: CreateCategoryProductUseCaseInput): Promise<CreateCategoryProductUseCaseOutput> {
         const category = await this.categoryProductRepository.findByCode(code)
-        if (!category) throw new Error('Resources already exist.')
+        if (category) throw new Error('Resources already exist.')
 
         const categoryProduct = CategoryProduct.create({
             code,

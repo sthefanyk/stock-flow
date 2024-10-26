@@ -2,6 +2,7 @@ import { TypeProduct } from '@/domain/product-management/enterprise/entities/typ
 import { TypeProductDAO } from '../../DAO/type-product-dao'
 import { SizeProduct } from '@/domain/product-management/enterprise/entities/size-product'
 import { SizeList } from '@/domain/product-management/enterprise/entities/size-list'
+import { SizeProductDAO } from '../../DAO/size-product-dao'
 
 type CreateTypeProductUseCaseInput = {
     code: string
@@ -10,7 +11,7 @@ type CreateTypeProductUseCaseInput = {
         unitOfMeasure: string
         sizeList: {
             code: string
-            description: string
+            description?: string
         }[]
     }
 }
@@ -18,14 +19,19 @@ type CreateTypeProductUseCaseInput = {
 type CreateTypeProductUseCaseOutput = { typeProduct: TypeProduct }
 
 export class CreateTypeProductUseCase {
-    constructor(private typeProductRepository: TypeProductDAO) {}
+    constructor(
+        private typeProductRepository: TypeProductDAO,
+        private sizeProductRepository: SizeProductDAO,
+    ) {}
 
     async execute({
         code,
         name,
         sizes,
     }: CreateTypeProductUseCaseInput): Promise<CreateTypeProductUseCaseOutput> {
-        const type = await this.typeProductRepository.findByCode(code)
+        const type = await this.typeProductRepository.findByCode(
+            code.toUpperCase(),
+        )
         if (type) throw new Error('Resources already exist.')
 
         const sizesProduct = sizes.sizeList.map((size) => {
@@ -44,6 +50,7 @@ export class CreateTypeProductUseCase {
         })
 
         await this.typeProductRepository.create(typeProduct)
+        await this.sizeProductRepository.saveAll(typeProduct.sizes.currentItems)
 
         return { typeProduct }
     }

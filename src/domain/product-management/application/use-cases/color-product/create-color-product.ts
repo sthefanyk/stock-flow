@@ -15,8 +15,10 @@ export class CreateColorProductUseCase {
         code,
         name,
     }: CreateColorProductUseCaseInput): Promise<CreateColorProductUseCaseOutput> {
-        const color = await this.colorProductRepository.findByCode(code)
-        if (!color) throw new Error('Resources already exist.')
+        const color = await this.colorProductRepository.findByCode(
+            code.toUpperCase(),
+        )
+        if (color) throw new Error('Resources already exist.')
 
         const colorProduct = ColorProduct.create({
             code,
