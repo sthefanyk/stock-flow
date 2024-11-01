@@ -33,7 +33,7 @@ export class Product extends AggregateRoot<ProductProps> {
     }
 
     static create(props: ProductProps, id?: UniqueEntityID) {
-        const product = new Product(props, id)
+        const product = new Product(this.validate(props), id)
 
         const isNewProduct = !id
 
@@ -42,5 +42,25 @@ export class Product extends AggregateRoot<ProductProps> {
         }
 
         return product
+    }
+
+    static validate(props: ProductProps) {
+        // Validation for the name (should not be empty)
+        if (!props.name || props.name.trim() === '') {
+            throw new Error('The name cannot be empty.')
+        }
+        props.name = props.name
+            .split(' ')
+            .map(
+                (word) =>
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+            )
+            .join(' ')
+
+        // Validation for the cost (should not be less than or equal to zero)
+        if (props.cost <= 0) {
+            throw new Error('The cost cannot be less than or equal to zero.')
+        }
+        return props
     }
 }

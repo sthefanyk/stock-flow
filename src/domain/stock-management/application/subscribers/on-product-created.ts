@@ -2,7 +2,7 @@ import { ProductCreatedEvent } from '@/domain/product-management/enterprise/even
 import { DomainEvents } from '@/shared/events/domain-events'
 import { EventHandler } from '@/shared/events/event-handler'
 import { StockDAO } from '../DAO/stock-dao'
-import { Stock } from '../../enterprise/entities/stock'
+import { InitializesStockForTheNewProductUseCase } from '../use-cases/InitializesStockForTheNewProduct'
 
 export class OnProductCreated implements EventHandler {
     constructor(private stockRepository: StockDAO) {
@@ -19,14 +19,14 @@ export class OnProductCreated implements EventHandler {
     private async initializesStockForTheNewProduct({
         product,
     }: ProductCreatedEvent) {
-        if (product) {
-            const stock = Stock.create({
-                productId: product.id,
-                minimumQuantity: 0,
-                quantityInStock: 0,
-            })
+        const usecase = new InitializesStockForTheNewProductUseCase(
+            this.stockRepository,
+        )
 
-            this.stockRepository.create(stock)
+        if (product) {
+            await usecase.execute({
+                product,
+            })
         }
     }
 }
